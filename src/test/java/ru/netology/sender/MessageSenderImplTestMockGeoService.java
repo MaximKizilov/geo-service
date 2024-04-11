@@ -1,6 +1,7 @@
 package ru.netology.sender;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import ru.netology.entity.Country;
 import ru.netology.entity.Location;
@@ -15,21 +16,27 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MessageSenderImplTestMockGeoService {
+
     @Test
-    void test1WithMockito() {
-        GeoService geoService = Mockito.mock(GeoServiceImpl.MOSCOW_IP);
-    //    Mockito.when(geoService.byIp(GeoServiceImpl.MOSCOW_IP)).thenReturn(new Location("Moscow", Country.RUSSIA, "Lenina", 15));
+    void test1WithMockitoRus() {
+       GeoService geoService = Mockito.mock(GeoServiceImpl.class);
+        Mockito.when(geoService.byIp(Mockito.anyString())).thenReturn(new Location("Moscow", Country.RUSSIA, "Lenina", 15));
         LocalizationServiceImpl localizationService = Mockito.mock(LocalizationServiceImpl.class);
         Mockito.when(localizationService.locale(Country.RUSSIA)).thenReturn("Добро пожаловать");
-
         MessageSenderImpl messageSender = new MessageSenderImpl(geoService, localizationService);
         Map<String, String> keyAndIp = new HashMap<>();
         keyAndIp.put(MessageSenderImpl.IP_ADDRESS_HEADER,"172.1.1.1");
-        messageSender.send(keyAndIp);
-
-
-      //  assertEquals(GeoServiceImpl.MOSCOW_IP.startsWith("172"), (keyAndIp.get(MessageSenderImpl.IP_ADDRESS_HEADER)).startsWith("172"));
-      //  assertEquals(, (new Location("Moscow", Country.RUSSIA, "Lenina", 15)));
-assertEquals( messageSender.send(keyAndIp), "Добро пожаловать");
+       assertEquals( messageSender.send(keyAndIp), "Добро пожаловать");
+    }
+    @Test
+    void test1WithMockitoEngl() {
+        GeoService geoService = Mockito.mock(GeoServiceImpl.class);
+        Mockito.when(geoService.byIp(Mockito.anyString())).thenReturn(new Location("New York", Country.USA, " 10th Avenue", 32));
+        LocalizationServiceImpl localizationService = Mockito.mock(LocalizationServiceImpl.class);
+        Mockito.when(localizationService.locale(Country.USA)).thenReturn( "Welcome");
+        MessageSenderImpl messageSender = new MessageSenderImpl(geoService, localizationService);
+        Map<String, String> keyAndIp = new HashMap<>();
+        keyAndIp.put(MessageSenderImpl.IP_ADDRESS_HEADER,GeoServiceImpl.NEW_YORK_IP);
+        assertEquals( messageSender.send(keyAndIp), "Welcome");
     }
 }
